@@ -8,7 +8,7 @@ export default function OnboardingPage() {
   const { profile, updateProfile } = useAuth()
   const navigate = useNavigate()
   const [step, setStep] = useState(1)
-  const [ageBand, setAgeBand] = useState<AgeBand | null>(profile?.age_band)
+  const [ageBand, setAgeBand] = useState<AgeBand | null>(profile?.age_band ?? null)
   const [niyyah, setNiyyah] = useState(profile?.niyyah_statement || '')
 
   const handleComplete = async () => {

@@ -1,7 +1,6 @@
 import { useAuth } from '../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { AGE_BANDS } from '../lib/constants'
-import { supabase } from '../lib/supabase'
 import { useState } from 'react'
 
 export default function ProfilePage() {

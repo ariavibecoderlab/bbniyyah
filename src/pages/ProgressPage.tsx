@@ -5,7 +5,7 @@ import { DIMENSIONS } from '../lib/constants'
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Tooltip } from 'recharts'
 
 export default function ProgressPage() {
-  const { user, profile } = useAuth()
+  const { user } = useAuth()
   const [assessments, setAssessments] = useState<any[]>([])
   const [selectedDim, setSelectedDim] = useState<string | null>(null)
 

@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
-import { CHECKIN_QUESTIONS, DIMENSIONS } from '../lib/constants'
+import { CHECKIN_QUESTIONS } from '../lib/constants'
 import type { AgeBand } from '../lib/constants'
 
 export default function CheckinPage() {
-  const { user, profile, updateProfile, refreshProfile } = useAuth()
+  const { user, profile, updateProfile } = useAuth()
   const [responses, setResponses] = useState<Record<string, boolean>>({})
   const [mood, setMood] = useState<string>('')
   const [note, setNote] = useState('')
@@ -100,7 +100,7 @@ export default function CheckinPage() {
         </div>
 
         <div className="space-y-3">
-          {questions.map((q, i) => (
+          {questions.map((q) => (
             <div
               key={q.id}
               className={`glass rounded-xl p-4 flex items-center justify-between transition ${
