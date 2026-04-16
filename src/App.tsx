@@ -1,4 +1,4 @@
-import { HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { HashRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import LoginPage from './pages/LoginPage'
 import OnboardingPage from './pages/OnboardingPage'
@@ -11,20 +11,24 @@ import ProfilePage from './pages/ProfilePage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading, profile } = useAuth()
+  const location = useLocation()
 
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="text-4xl animate-pulse">🌙</div></div>
   if (!user) return <Navigate to="/" replace />
 
   // Redirect to onboarding if age_band not set
-  if (profile && !profile.age_band) {
-    const loc = window.location.pathname
-    if (loc !== '/onboarding') return <Navigate to="/onboarding" replace />
+  if (profile && !profile.age_band && location.pathname !== '/onboarding') {
+    return <Navigate to="/onboarding" replace />
   }
 
-  // Redirect to baseline if no assessments yet
-  if (profile?.age_band && !profile.niyyah_statement) {
-    const loc = window.location.pathname
-    if (loc !== '/onboarding' && loc !== '/') return <Navigate to="/onboarding" replace />
+  // Redirect to baseline if age_band set but no niyyah
+  if (profile?.age_band && !profile.niyyah_statement && location.pathname !== '/onboarding') {
+    return <Navigate to="/onboarding" replace />
+  }
+
+  // If fully onboarded, don't let them go back to onboarding
+  if (profile?.age_band && profile?.niyyah_statement && location.pathname === '/onboarding') {
+    return <Navigate to="/dashboard" replace />
   }
 
   return <>{children}</>
@@ -32,6 +36,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 function BottomNav() {
   const location = useLocation()
+  const navigate = useNavigate()
   const { user } = useAuth()
 
   if (!user || location.pathname === '/' || location.pathname === '/onboarding' || location.pathname === '/baseline') return null
@@ -51,7 +56,7 @@ function BottomNav() {
           const active = location.pathname === tab.path
           return (
             <button
-              key={tab.path} onClick={() => window.location.href = tab.path}
+              key={tab.path} onClick={() => navigate(tab.path)}
               className={`flex-1 py-3 flex flex-col items-center gap-0.5 transition ${
                 active ? 'text-primary' : 'text-gray-400'
               }`}
@@ -67,6 +72,17 @@ function BottomNav() {
 }
 
 function AppRoutes() {
+  const { user, profile } = useAuth()
+  const location = useLocation()
+
+  // Auto-redirect logged-in users away from login page
+  if (user && profile && location.pathname === '/') {
+    if (!profile.age_band || !profile.niyyah_statement) {
+      return <Navigate to="/onboarding" replace />
+    }
+    return <Navigate to="/dashboard" replace />
+  }
+
   return (
     <>
       <Routes>
