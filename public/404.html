@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      // SPA redirect: GitHub Pages serves this for /bbniyyah/* paths
+      // Redirect to index.html with the path preserved
+      var path = window.location.pathname;
+      if (!path.endsWith('.html') && !path.includes('.')) {
+        window.location.replace('/bbniyyah/');
+      }
+    </script>
+  </head>
+  <body>
+    Redirecting...
+  </body>
+</html>

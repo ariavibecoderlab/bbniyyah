@@ -52,11 +52,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const signUp = async (email: string, password: string, name: string, role: string) => {
-    const { data: { user: newUser } } = await supabase.auth.signUp({ email, password })
+    const { data: { user: newUser }, error } = await supabase.auth.signUp({ email, password })
+    if (error) throw error
     if (newUser) {
-      await supabase.from('bb_profiles').insert({
+      const { error: profileError } = await supabase.from('bb_profiles').upsert({
         id: newUser.id, full_name: name, role, age_band: null, preferred_language: 'en', streak_count: 0,
       })
+      if (profileError) console.error('Profile insert error:', profileError)
       await fetchProfile(newUser.id)
     }
   }
